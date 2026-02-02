@@ -28,7 +28,7 @@ const normalizeLocalFile = (file, parentPath) => {
 };
 
 // Helper to create WebDAV client with proxy support
-const createWebDAVClient = (drive) => {
+export const createWebDAVClient = (drive) => {
     let url = drive.url;
     // Proxy for Jianguoyun on Web/Vercel to avoid CORS
     if (!Capacitor.isNativePlatform() && url.includes('dav.jianguoyun.com')) {

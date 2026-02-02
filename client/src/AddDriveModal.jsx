@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { FileService } from './services/FileSystemService';
-import { createClient } from 'webdav';
+import { FileService, createWebDAVClient } from './services/FileSystemService';
 import clsx from 'clsx';
 // import { XMarkIcon, ServerStackIcon } from '@heroicons/react/24/outline';
 import { translations } from './i18n';
@@ -23,7 +22,8 @@ const AddDriveModal = ({ onClose, onAdded, lang = 'en' }) => {
     }
     setTestStatus({ type: 'testing', msg: t.testing });
     try {
-      const client = createClient(formData.url, {
+      const client = createWebDAVClient({
+          url: formData.url,
           username: formData.username,
           password: formData.password
       });
@@ -48,7 +48,8 @@ const AddDriveModal = ({ onClose, onAdded, lang = 'en' }) => {
       }
 
       // Step 1: Verify Connection First
-      const client = createClient(formData.url, {
+      const client = createWebDAVClient({
+          url: formData.url,
           username: formData.username,
           password: formData.password
       });
