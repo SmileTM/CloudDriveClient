@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { FileService } from './services/FileSystemService';
+import { createClient } from 'webdav';
 import clsx from 'clsx';
 // import { XMarkIcon, ServerStackIcon } from '@heroicons/react/24/outline';
 import { translations } from './i18n';
@@ -22,7 +23,11 @@ const AddDriveModal = ({ onClose, onAdded, lang = 'en' }) => {
     }
     setTestStatus({ type: 'testing', msg: t.testing });
     try {
-      await axios.post('/api/drives/test', formData);
+      const client = createClient(formData.url, {
+          username: formData.username,
+          password: formData.password
+      });
+      await client.getDirectoryContents('/');
       setTestStatus({ type: 'success', msg: t.connectionSuccess });
     } catch (err) {
       setTestStatus({ type: 'error', msg: t.connectionFailed });
@@ -43,37 +48,33 @@ const AddDriveModal = ({ onClose, onAdded, lang = 'en' }) => {
       }
 
       // Step 1: Verify Connection First
+      const client = createClient(formData.url, {
+          username: formData.username,
+          password: formData.password
+      });
+      
       try {
-        await axios.post('/api/drives/test', formData);
+        await client.getDirectoryContents('/');
       } catch (testErr) {
         setTestStatus({ type: 'error', msg: t.connectionFailed });
-        // Don't proceed if test fails
         setLoading(false);
         return; 
       }
 
       // Step 2: Save Drive
       const drivePayload = {
+        id: crypto.randomUUID(),
         type: 'webdav',
-        quota: null,
+        quota: { used: 0, total: 0 },
         ...formData
       };
 
-      const res = await axios.post('/api/drives', drivePayload);
-      onAdded(res.data); 
+      await FileService.addDrive(drivePayload);
+      onAdded(drivePayload); 
       onClose();
     } catch (err) {
       console.error(err);
-      if (err.response?.status === 409) {
-        const msg = err.response?.data?.error || '';
-        if (msg.includes('Name')) {
-          alert(t.nameTaken);
-        } else {
-          alert(t.driveAccountAdded);
-        }
-      } else {
-        alert(t.failedToAdd + ': ' + (err.response?.data?.error || err.message));
-      }
+      alert(t.failedToAdd + ': ' + err.message);
     } finally {
       setLoading(false);
     }
