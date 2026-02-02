@@ -1,3 +1,9 @@
 {
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/jianguoyun-proxy/:match*",
+      "destination": "/api/proxy/:match*"
+    }
+  ]
 }
