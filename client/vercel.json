@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/jianguoyun-proxy/:match*",
-      "destination": "https://dav.jianguoyun.com/dav/:match*"
+      "destination": "/api/jianguoyun?path=:match*"
     },
     {
       "source": "/(.*)",
