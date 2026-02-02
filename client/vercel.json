@@ -1,5 +1,15 @@
 {
   "outputDirectory": "dist",
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, DELETE, OPTIONS, PROPFIND, MKCOL, MOVE, COPY, LOCK, UNLOCK" },
+        { "key": "Access-Control-Allow-Headers", "value": "Authorization, Content-Type, Depth, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, Destination, Overwrite, User-Agent, X-Requested-With" }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/jianguoyun-proxy/:match*",
