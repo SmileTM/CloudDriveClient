@@ -1,0 +1,8 @@
+[
+  {
+    "id": "local",
+    "name": "Local Storage",
+    "type": "local",
+    "path": "./storage"
+  }
+]
