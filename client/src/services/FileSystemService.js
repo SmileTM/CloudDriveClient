@@ -27,6 +27,19 @@ const normalizeLocalFile = (file, parentPath) => {
     };
 };
 
+// Helper to create WebDAV client with proxy support
+const createWebDAVClient = (drive) => {
+    let url = drive.url;
+    // Proxy for Jianguoyun on Web/Vercel to avoid CORS
+    if (!Capacitor.isNativePlatform() && url.includes('dav.jianguoyun.com')) {
+        url = '/jianguoyun-proxy/';
+    }
+    return createClient(url, {
+        username: drive.username,
+        password: drive.password
+    });
+};
+
 export const FileService = {
     // --- Drive Configuration (Local Only) ---
     async getDrives() {
@@ -97,10 +110,7 @@ export const FileService = {
                  return [];
              }
         } else if (drive.type === 'webdav') {
-            const client = createClient(drive.url, {
-                username: drive.username,
-                password: drive.password
-            });
+            const client = createWebDAVClient(drive);
             const items = await client.getDirectoryContents(path);
             return items.map(normalizeWebDAVFile);
         }
@@ -118,7 +128,7 @@ export const FileService = {
                 });
             }
         } else {
-            const client = createClient(drive.url, { username: drive.username, password: drive.password });
+            const client = createWebDAVClient(drive);
             await client.createDirectory(path);
         }
     },
@@ -133,7 +143,7 @@ export const FileService = {
                 })));
             }
         } else {
-            const client = createClient(drive.url, { username: drive.username, password: drive.password });
+            const client = createWebDAVClient(drive);
             await Promise.all(items.map(itemPath => client.deleteFile(itemPath)));
         }
     },
@@ -148,7 +158,7 @@ export const FileService = {
                 await Filesystem.rename({ from: oldPath, to: newPath, directory: Directory.Documents });
             }
         } else {
-            const client = createClient(drive.url, { username: drive.username, password: drive.password });
+            const client = createWebDAVClient(drive);
             await client.moveFile(oldPath, newPath);
         }
     },
@@ -164,7 +174,7 @@ export const FileService = {
                 }));
             }
         } else {
-            const client = createClient(drive.url, { username: drive.username, password: drive.password });
+            const client = createWebDAVClient(drive);
             await Promise.all(items.map(item => {
                  const name = item.split('/').pop();
                  const destPath = destination.replace(/\/+$/, '') + '/' + name;
@@ -205,7 +215,7 @@ export const FileService = {
                 return contents.data;
             }
         } else {
-            const client = createClient(drive.url, { username: drive.username, password: drive.password });
+            const client = createWebDAVClient(drive);
             const buff = await client.getFileContents(path);
             return buff;
         }
@@ -231,7 +241,7 @@ export const FileService = {
                  });
              }
         } else {
-            const client = createClient(drive.url, { username: drive.username, password: drive.password });
+            const client = createWebDAVClient(drive);
             // webdav client accepts ArrayBuffer or String
             const arrayBuffer = await fileObj.arrayBuffer();
             await client.putFileContents(path, arrayBuffer);

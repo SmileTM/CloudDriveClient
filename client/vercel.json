@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/jianguoyun-proxy/:match*",
+      "destination": "https://dav.jianguoyun.com/dav/:match*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

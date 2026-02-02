@@ -7,7 +7,12 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://localhost:8000',
-      '/webdav': 'http://localhost:8000'
+      '/webdav': 'http://localhost:8000',
+      '/jianguoyun-proxy': {
+        target: 'https://dav.jianguoyun.com/dav/',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/jianguoyun-proxy/, '')
+      }
     }
   }
 })
