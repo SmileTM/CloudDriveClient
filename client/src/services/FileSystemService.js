@@ -32,7 +32,7 @@ export const createWebDAVClient = (drive) => {
     let url = drive.url;
     // Proxy for Jianguoyun on Web/Vercel to avoid CORS
     if (!Capacitor.isNativePlatform() && url.includes('dav.jianguoyun.com')) {
-        url = '/jianguoyun-proxy/';
+        url = '/api/proxy/';
     }
     return createClient(url, {
         username: drive.username,
